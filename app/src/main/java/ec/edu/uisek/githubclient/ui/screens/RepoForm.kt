@@ -103,7 +103,7 @@ fun RepoForm (
             Button(
                 onClick = {viewModel.createRepo(name, description)},
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !it add.name.isBlank()
+                enabled = !name.isBlank()
             ) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,

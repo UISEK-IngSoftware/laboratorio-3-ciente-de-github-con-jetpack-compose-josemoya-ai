@@ -14,10 +14,10 @@ object RetrofitClient {
     }
 
     private val httpClient = OkHttpClient.Builder()
-        .authenticator ( logging )
-        .authenticator { chain ->
+        .addInterceptor ( logging )
+        .addInterceptor { chain ->
             val token = BuildConfig.GITHUB_TOKEN
-            println("Token es vacio? ${token.isEmty()}")
+            println("Token es vacio? ${token.isEmpty()}")
 
         val request = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $token")
