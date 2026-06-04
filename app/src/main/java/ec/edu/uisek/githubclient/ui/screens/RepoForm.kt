@@ -33,12 +33,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ec.edu.uisek.githubclient.models.Repository
 import ec.edu.uisek.githubclient.ui.theme.GithubClientTheme
 import ec.edu.uisek.githubclient.viewmodels.RepoFormViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepoForm (
+    repository: Repository? = null,
     onBackClick: () -> Unit = {},
     onSaveSuccess: () -> Unit = {},
     viewModel: RepoFormViewModel = viewModel()
@@ -47,8 +49,12 @@ fun RepoForm (
     val isSuccess by viewModel.isSuccess.collectAsState()
     val errorMsg by viewModel.errorMsg.collectAsState()
 
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    var name by remember {
+        mutableStateOf(repository?.name ?: "")
+    }
+    var description by remember {
+        mutableStateOf(repository?.description ?: "")
+    }
 
     LaunchedEffect(isSuccess) {
         if (isSuccess) {
@@ -60,7 +66,14 @@ fun RepoForm (
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Nuevo repositorio") },
+                title = {
+                    Text(
+                        if (repository == null)
+                            "Nuevo repositorio"
+                        else
+                            "Editar repositorio"
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -101,7 +114,25 @@ fun RepoForm (
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = {viewModel.createRepo(name, description)},
+                onClick = {
+
+                    if (repository == null) {
+
+                        viewModel.createRepo(
+                            name,
+                            description
+                        )
+
+                    } else {
+
+                        viewModel.updateRepo(
+                            owner = repository.owner.name,
+                            repo = repository.name,
+                            name = name,
+                            description = description
+                        )
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !name.isBlank()
             ) {

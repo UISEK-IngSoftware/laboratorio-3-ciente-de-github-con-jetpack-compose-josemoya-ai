@@ -40,4 +40,70 @@ class RepoFormViewModel: ViewModel() {
     fun resetSuccess() {
         _isSuccess.value = false
     }
+
+    fun updateRepo(
+        owner: String,
+        repo: String,
+        name: String,
+        description: String
+    ) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMsg.value = null
+
+            try {
+                val payload = RepositoryPayload(
+                    name = name,
+                    description = description
+                )
+
+                apiService.updateRepository(
+                    owner = owner,
+                    repo = repo,
+                    repository = payload
+                )
+
+                _isSuccess.value = true
+
+            } catch (e: Exception) {
+                _errorMsg.value =
+                    "Error al actualizar repositorio: ${e.localizedMessage}"
+
+                e.printStackTrace()
+
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun deleteRepo(
+        owner: String,
+        repo: String
+    ) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMsg.value = null
+
+            try {
+
+                apiService.deleteRepository(
+                    owner = owner,
+                    repo = repo
+                )
+
+                _isSuccess.value = true
+
+            } catch (e: Exception) {
+
+                _errorMsg.value =
+                    "Error al eliminar repositorio: ${e.localizedMessage}"
+
+                e.printStackTrace()
+
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 }

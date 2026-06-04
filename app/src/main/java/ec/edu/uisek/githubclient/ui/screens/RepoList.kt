@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ec.edu.uisek.githubclient.models.Repository
 import ec.edu.uisek.githubclient.ui.components.RepoItem
 import ec.edu.uisek.githubclient.ui.theme.GithubClientTheme
 import ec.edu.uisek.githubclient.viewmodels.RepoListViewModel
@@ -30,7 +31,9 @@ import ec.edu.uisek.githubclient.viewmodels.RepoListViewModel
 fun RepoList(
     modifier: Modifier = Modifier,
     viewModel: RepoListViewModel = viewModel(),
-    onNavigateToForm: () -> Unit = {}
+    onNavigateToForm: () -> Unit = {},
+    onEditRepo: (Repository) -> Unit = {},
+    onDeleteRepo: (Repository) -> Unit = {}
 ) {
     val repos by viewModel.repos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -78,7 +81,15 @@ fun RepoList(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(repos.size) { index ->
-                        RepoItem(repos[index])
+                        RepoItem(
+                            repository = repos[index],
+                            onEditClick = {
+                                onEditRepo(it)
+                            },
+                            onDeleteClick = {
+                                onDeleteRepo(it)
+                            }
+                        )
                     }
                 }
             }
